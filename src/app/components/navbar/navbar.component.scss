@@ -1,0 +1,13 @@
+a {
+    color: rgb(245 158 11);
+    &:hover {
+    color: rgb(6 182 212);
+    }
+}
+
+.active-link {
+    color: rgb(5 150 105);
+    &:hover {
+        color: rgb(132 204 22);
+    }
+}
