@@ -13,6 +13,10 @@ export const appConfig: ApplicationConfig = {
     provideClientHydration(),
     provideHttpClient(
       withFetch(),
-    ), provideFirebaseApp(() => initializeApp({"projectId":"records-sphere","appId":"1:511865460078:web:1973db26e1eea6abbd5d7f","storageBucket":"records-sphere.appspot.com","apiKey":"AIzaSyD0NN-sadWUw0L9psrwaT6ew3dspojXf54","authDomain":"records-sphere.firebaseapp.com","messagingSenderId":"511865460078","measurementId":"G-3DNRYG9SSJ"})), provideFirestore(() => getFirestore())
+    ), provideFirebaseApp(() => initializeApp({
+      "projectId":"records-sphere","appId":"1:511865460078:web:1973db26e1eea6abbd5d7f","storageBucket":"records-sphere.appspot.com","apiKey":"AIzaSyD0NN-sadWUw0L9psrwaT6ew3dspojXf54","authDomain":"records-sphere.firebaseapp.com","messagingSenderId":"511865460078",
+      "measurementId":"G-3DNRYG9SSJ"
+    })), 
+    provideFirestore(() => getFirestore())
   ]
 };
