@@ -1,17 +1,67 @@
 <section class="md:p-16 p-8 fade-in-up transition delay-150 duration-300 ease-in-out">
-    <div>
-        <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Animi magni ea quis labore quibusdam.</p>
+    <div class="mt-12 md:mt-8 text-center mb-8">
+      <h1 class="text-4xl font-bold mb-4">Welcome to Record Sphere</h1>
+      <p class="text-lg text-gray-400 dark:text-gray-600">Your ultimate source for global records in various domains.</p>
     </div>
-    <div>
-        <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Nisi deserunt dolores enim maiores laudantium sint vitae hic nulla architecto dolorem, corporis consequuntur id? Quia, quis reiciendis debitis voluptatibus repellat mollitia quod? Aperiam velit reprehenderit distinctio! Voluptas natus placeat maxime error beatae, quo, enim, quas hic iure nam nobis facilis voluptate.</p>
+    
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+      <div class="bg-indigo-800 p-6 rounded-lg shadow-lg">
+        <h2 class="text-2xl font-semibold mb-2">Guinness World Records</h2>
+        <p class="text-gray-400">Explore the most astonishing and remarkable records from around the world.</p>
+        <button (click)="fetchGuinnessRecords()" class="mt-4 text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 rounded-lg py-2 px-4">Show Records</button>
+        <div *ngIf="showGuinnessRecords" class="mt-4 w-full">
+            <div *ngFor="let record of guinnessRecords" class="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-lg mb-4">
+              <h2 class="text-2xl font-semibold mb-2">{{ record.text }}</h2>
+              <p class="text-gray-700 dark:text-gray-400">{{ record.desc }}</p>
+              <a [href]="record.href" target="_blank" class="text-indigo-600 dark:text-indigo-400 hover:underline">Read more</a>
+            </div>
+        </div>
     </div>
-    <div>
-        <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Nisi deserunt dolores enim maiores laudantium sint vitae hic nulla architecto dolorem, corporis consequuntur id? Quia, quis reiciendis debitis voluptatibus repellat mollitia quod? Aperiam velit reprehenderit distinctio! Voluptas natus placeat maxime error beatae, quo, enim, quas hic iure nam nobis facilis voluptate.</p>
+      
+      <div class="bg-indigo-800 p-6 rounded-lg shadow-lg">
+        <h2 class="text-2xl font-semibold mb-2">Olympics</h2>
+        <p class="text-gray-400">Discover the greatest achievements and records in the history of the Olympic Games.</p>
+      </div>
+      
+      <div class="bg-indigo-800 p-6 rounded-lg shadow-lg">
+        <h2 class="text-2xl font-semibold mb-2">Football</h2>
+        <p class="text-gray-400">Dive into the records of World Cup, UEFA Champions League, and top European leagues.</p>
+      </div>
+      
+      <div class="bg-indigo-800 p-6 rounded-lg shadow-lg">
+        <h2 class="text-2xl font-semibold mb-2">NBA</h2>
+        <p class="text-gray-400">Explore the most impressive records in the history of the NBA.</p>
+      </div>
+      
+      <div class="bg-indigo-800 p-6 rounded-lg shadow-lg">
+        <h2 class="text-2xl font-semibold mb-2">NFL</h2>
+        <p class="text-gray-400">Check out the top records and achievements in the NFL.</p>
+      </div>
+      
+      <div class="bg-indigo-800 p-6 rounded-lg shadow-lg">
+        <h2 class="text-2xl font-semibold mb-2">Tennis</h2>
+        <p class="text-gray-400">Find out the records in men's and women's tennis.</p>
+      </div>
+      
+      <div class="bg-indigo-800 p-6 rounded-lg shadow-lg">
+        <h2 class="text-2xl font-semibold mb-2">WWE</h2>
+        <p class="text-gray-400">Discover the most thrilling records in WWE history.</p>
+      </div>
+      
+      <div class="bg-indigo-800 p-6 rounded-lg shadow-lg">
+        <h2 class="text-2xl font-semibold mb-2">UFC</h2>
+        <p class="text-gray-400">Explore the top records in UFC.</p>
+      </div>
+      
+      <div class="bg-indigo-800 p-6 rounded-lg shadow-lg">
+        <h2 class="text-2xl font-semibold mb-2">Boxing</h2>
+        <p class="text-gray-400">Check out the greatest records in the history of boxing.</p>
+      </div>
+      
+      <div class="bg-indigo-800 p-6 rounded-lg shadow-lg">
+        <h2 class="text-2xl font-semibold mb-2">Formula 1</h2>
+        <p class="text-gray-400">Discover the top records in Formula 1 racing.</p>
+      </div>
     </div>
-    <div>
-        <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Nisi deserunt dolores enim maiores laudantium sint vitae hic nulla architecto dolorem, corporis consequuntur id? Quia, quis reiciendis debitis voluptatibus repellat mollitia quod? Aperiam velit reprehenderit distinctio! Voluptas natus placeat maxime error beatae, quo, enim, quas hic iure nam nobis facilis voluptate.</p>
-    </div>
-    <div>
-        <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Nisi deserunt dolores enim maiores laudantium sint vitae hic nulla architecto dolorem, corporis consequuntur id? Quia, quis reiciendis debitis voluptatibus repellat mollitia quod? Aperiam velit reprehenderit distinctio! Voluptas natus placeat maxime error beatae, quo, enim, quas hic iure nam nobis facilis voluptate.</p>
-    </div>
-</section>
+  </section>
+  
