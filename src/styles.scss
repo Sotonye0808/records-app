@@ -1,3 +1,11 @@
 @import "tailwindcss/base";
 @import "tailwindcss/components";
 @import "tailwindcss/utilities";
+
+body.dark {
+    @apply bg-gray-900 text-white;
+  }
+
+body {
+    @apply bg-lime-100 text-black;
+  }

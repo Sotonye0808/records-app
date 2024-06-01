@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { RouterOutlet, RouterModule } from '@angular/router';
+import { ChildrenOutletContexts, RouterOutlet, RouterModule } from '@angular/router';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 
 import { HomeComponent } from './pages/home/home.component';
@@ -29,4 +29,11 @@ import { ThemeToggleComponent } from './components/theme-toggle/theme-toggle.com
 })
 export class AppComponent {
   title = 'records-app';
+  public animationsDisabled = false;
+
+  constructor(private contexts: ChildrenOutletContexts) {}
+
+  getRouteAnimationData() {
+    return this.contexts.getContext('primary')?.route?.snapshot?.data?.['animation'];
+  }
 }

@@ -9,18 +9,22 @@ export const routes: Routes = [
   { 
     path: '', 
     redirectTo: '/home', 
-    pathMatch: 'full'
+    pathMatch: 'full',
+    data: { animation: 'Home' }
   },
   { 
     path: 'home', 
-    component: HomeComponent 
+    component: HomeComponent ,
+    data: { animation: 'Home' }
   },
   { 
     path: 'search', 
-    component: SearchComponent 
+    component: SearchComponent,
+    data: { animation: 'Search' }
   },
   { 
     path: 'about', 
-    component: AboutComponent
+    component: AboutComponent,
+    data: { animation: 'About' }
   },
 ];
