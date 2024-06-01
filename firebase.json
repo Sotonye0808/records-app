@@ -1,6 +1,6 @@
 {
   "hosting": {
-    "public": "src",
+    "public": "dist/records-app",
     "ignore": [
       "firebase.json",
       "**/.*",
