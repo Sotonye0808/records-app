@@ -1,14 +1,13 @@
 import { Injectable } from '@angular/core';
-import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { Firestore, collectionData, collection, query, where } from '@angular/fire/firestore';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 
 
-interface GuinnessRecord {
-  href: string;
-  text: string;
-  desc: string;
-  isAgeRestricted: boolean;
+interface Record {
+  category: string;
+  title: string;
+  description: string;
 }
 
 interface OlympicRecord {
@@ -22,22 +21,12 @@ interface OlympicRecord {
   providedIn: 'root'
 })
 export class RecordService {
-  private rapidApiKey = '363f81d9afmsh84d19069008829ap1a1297jsn0e71e9c34c3b'; // Replace with your actual API key
-  private headers = new HttpHeaders({
-    'x-rapidapi-key': this.rapidApiKey,
-    'x-rapidapi-host': 'guinness-world-records-api.p.rapidapi.com'
-  });
+  constructor(private firestore: Firestore) {}
 
-  private endpoints = {
-    guinness: 'https://guinness-world-records-api.p.rapidapi.com/guinness/records/all',
-    // Add other endpoints here as needed
-  };
-
-  constructor(private http: HttpClient) {}
-
-  getGuinnessRecords(): Observable<GuinnessRecord[]> {
-    return this.http.get<{ titlesInfo: GuinnessRecord[] }>(this.endpoints.guinness, { headers: this.headers })
-      .pipe(map(response => response.titlesInfo));
+  getRecordsByCategory(category: string): Observable<Record[]> {
+    const recordsRef = collection(this.firestore, 'records');
+    const q = query(recordsRef, where('category', '==', category));
+    return collectionData(q) as Observable<Record[]>;
   }
 
   /* getOlympicRecords(): Observable<OlympicRecord[]> {
