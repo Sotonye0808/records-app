@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { RecordService } from '../../services/record.service';
+import { RecordsService } from '../../services/record.service';
 import { Observable } from 'rxjs';
 
 @Component({
@@ -11,16 +11,18 @@ import { Observable } from 'rxjs';
   styleUrls: ['./home.component.scss']
 })
 export class HomeComponent implements OnInit {
-  guinnessRecords: any[] = [];
+  records: any[] = [];
 
-  constructor(private recordService: RecordService) { }
+  constructor(private recordsService: RecordsService) { }
 
   ngOnInit(): void {
   }
 
   fetchRecords(): void {
-    this.recordService.getGuinnessRecords().subscribe((records) => {
-      this.guinnessRecords = records;
+    this.recordsService.getGuinnessRecords().then((data) => {
+      this.records = data;
+    }).catch((error) => {
+      console.error('Error fetching records:', error);
     });
   }
 }

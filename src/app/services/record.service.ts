@@ -1,22 +1,27 @@
 import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
-import { Observable } from 'rxjs';
-
-interface GuinnessRecord {
-  title: string;
-  description: string;
-  year: number;
-}
+import { App, Credentials } from 'realm-web';
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
-export class RecordService {
-  private apiUrl = 'https://records-sphere.netlify.app/api';  // Replace with your deployed Vercel URL
+export class RecordsService {
+  private app: App;
 
-  constructor(private http: HttpClient) { }
+  constructor() {
+    this.app = new App({ id: 'application-0-nrleuwy' });
+  }
 
-  getGuinnessRecords(): Observable<GuinnessRecord[]> {
-    return this.http.get<GuinnessRecord[]>(`${this.apiUrl}/guinness`);
+  async getGuinnessRecords() {
+    const credentials = Credentials.anonymous();
+    try {
+      const user = await this.app.logIn(credentials);
+      const mongo = user.mongoClient('mongodb-atlas');
+      const collection = mongo.db('recordsDB').collection('guinnessRecords');
+      return await collection.find();
+    } catch (error) {
+      console.error('Failed to fetch records:', error);
+      throw error;
+    }
   }
 }
+
