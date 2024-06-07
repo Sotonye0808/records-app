@@ -1,6 +1,6 @@
 {
   "hosting": {
-    "public": "dist/records-app/browser",
+    "public": "public",
     "ignore": [
       "firebase.json",
       "**/.*",
@@ -9,7 +9,7 @@
     "rewrites": [
       {
         "source": "**",
-        "destination": "/index.csr.html"
+        "destination": "/index.html"
       }
     ]
   }
