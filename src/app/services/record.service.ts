@@ -1,37 +1,22 @@
 import { Injectable } from '@angular/core';
-import { Firestore, collectionData, collection, query, where } from '@angular/fire/firestore';
+import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
-import { map } from 'rxjs/operators';
 
-
-interface Record {
-  category: string;
+interface GuinnessRecord {
   title: string;
   description: string;
-}
-
-interface OlympicRecord {
-  event: string;
-  athlete: string;
-  country: string;
-  record: string;
+  year: number;
 }
 
 @Injectable({
   providedIn: 'root'
 })
 export class RecordService {
-  constructor(private firestore: Firestore) {}
+  private apiUrl = 'https://records-sphere.netlify.app/api';  // Replace with your deployed Vercel URL
 
-  getRecordsByCategory(category: string): Observable<Record[]> {
-    const recordsRef = collection(this.firestore, 'records');
-    const q = query(recordsRef, where('category', '==', category));
-    return collectionData(q) as Observable<Record[]>;
+  constructor(private http: HttpClient) { }
+
+  getGuinnessRecords(): Observable<GuinnessRecord[]> {
+    return this.http.get<GuinnessRecord[]>(`${this.apiUrl}/guinness`);
   }
-
-  /* getOlympicRecords(): Observable<OlympicRecord[]> {
-    return this.http.get<OlympicRecord[]>(this.endpoints.olympics);
-  } */
-
-  // Add similar methods for other categories
 }
