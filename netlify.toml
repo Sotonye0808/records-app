@@ -1,6 +1,6 @@
 [build]
   command = "npm run build"
-  publish = "dist/records-app"
+  publish = "dist/records-app/browser"
 
 [functions]
   directory = "functions"
