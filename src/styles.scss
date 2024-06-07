@@ -3,9 +3,9 @@
 @import "tailwindcss/utilities";
 
 body.dark {
-    @apply bg-gray-900 text-white;
+    @apply bg-gray-900 text-gray-300;
   }
 
 body {
-    @apply bg-lime-100 text-black;
+    @apply bg-sky-200 text-black;
   }
