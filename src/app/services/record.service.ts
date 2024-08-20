@@ -38,6 +38,18 @@ export class RecordsService {
     }
   }
 
+  addRecords(collectionName: string, records: any[]): Promise<void> {
+    return Promise.all(records.map((record) => this.addRecord(collectionName, record)))
+      .then(() => {
+        console.log('All records added successfully');
+      })
+      .catch((error) => {
+        console.error('Failed to add records:', error);
+        throw error;
+      });
+    
+  }
+
   async updateRecord(collectionName: string, record: any): Promise<void> {
     const credentials = Credentials.anonymous();
     try {

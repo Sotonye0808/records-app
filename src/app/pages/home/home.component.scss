@@ -27,17 +27,50 @@
   }
 
   .record-card {
-    @apply m-2 p-2 border border-solid border-gray-300 rounded shadow-md transition-shadow;
+    @apply m-2 p-2 border border-solid border-gray-300 rounded shadow-md transition-shadow font-mono;
 
     &:hover {
       @apply shadow-lg;
     }
 
     h3 {
-      @apply text-lg font-semibold;
+      .record-label {
+        @apply text-lg font-bold underline;
+      }
+  
+      .record-value {
+        @apply text-2xl capitalize;
+      }
     }
 
     p {
-      @apply text-sm;
+      .record-label {
+        @apply text-sm font-bold;
+      }
+
+      .record-value {
+        @apply text-xl;
+      }
     }
+
+    .record-image{
+      max-height: 50vh;
+
+      @apply w-full object-cover rounded;
+    }
+
+    .sources {
+      @apply text-xs text-gray-500 capitalize;
+      
+      a {
+        @apply text-xs text-blue-500 hover:underline hover:text-blue-700;
+      }
+    }
+
+    .related-links {
+      a {
+        @apply text-xs text-blue-500 hover:underline hover:text-blue-700;
+      }
+    }
+
   }

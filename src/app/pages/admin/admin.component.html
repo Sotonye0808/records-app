@@ -10,17 +10,52 @@
   </div>
 
   <div class="mb-4">
-    <h2 class="text-2xl font-semibold mb-2">Add New Record</h2>
-    <form (ngSubmit)="addRecord()">
-      <div class="mb-2">
-        <label for="title" class="block text-sm font-medium text-gray-700">Title</label>
-        <input id="title" [(ngModel)]="newRecord.title" name="title" class="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md">
+    <h2 class="text-2xl font-semibold mb-2">Add New Records</h2>
+    <form [formGroup]="recordForm">
+      <div *ngFor="let recordForm of newRecords; let i = index" [formGroup]="recordForm" class="mb-4 p-4 border rounded-md">
+        <h3 class="text-xl font-semibold mb-2">Record {{ i + 1 }}</h3>
+        <div class="mb-2">
+          <label for="title-{{i}}" class="block text-sm font-medium text-gray-700">Title</label>
+          <input id="title-{{i}}" formControlName="title" class="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md">
+        </div>
+        <div class="mb-2">
+          <label for="description-{{i}}" class="block text-sm font-medium text-gray-700">Description</label>
+          <textarea id="description-{{i}}" formControlName="description" class="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md"></textarea>
+        </div>
+        <div class="mb-2">
+          <label for="image-{{i}}" class="block text-sm font-medium text-gray-700">Image URL</label>
+          <input id="image-{{i}}" formControlName="image" class="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md">
+        </div>
+        <div formGroupName="heldBy">
+            <div class="mb-2">
+              <label for="heldByTeam-{{i}}" class="block text-sm font-medium text-gray-700">Held By (Team)</label>
+              <input id="heldByTeam-{{i}}" formControlName="team" class="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md">
+            </div>
+            <div class="mb-2">
+              <label for="heldByPerson-{{i}}" class="block text-sm font-medium text-gray-700">Held By (Person)</label>
+              <input id="heldByPerson-{{i}}" formControlName="person" class="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md">
+            </div>
+            <div class="mb-2">
+              <label for="heldByNation-{{i}}" class="block text-sm font-medium text-gray-700">Held By (Nation)</label>
+              <input id="heldByNation-{{i}}" formControlName="nation" class="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md">
+            </div>
+          </div>
+        <div class="mb-2">
+          <label for="dateRecorded-{{i}}" class="block text-sm font-medium text-gray-700">Date Recorded</label>
+          <input id="dateRecorded-{{i}}" formControlName="dateRecorded" type="date" class="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md">
+        </div>
+        <div class="mb-2">
+          <label for="sources-{{i}}" class="block text-sm font-medium text-gray-700">Sources (comma separated)</label>
+          <input id="sources-{{i}}" formControlName="sources" class="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md">
+        </div>
+        <div class="mb-2">
+          <label for="relatedLinks-{{i}}" class="block text-sm font-medium text-gray-700">Related Links (comma separated)</label>
+          <input id="relatedLinks-{{i}}" formControlName="relatedLinks" class="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md">
+        </div>
+        <button type="button" (click)="removeRecord(i)" class="bg-red-600 text-white px-4 py-2 rounded-md">Remove Record</button>
       </div>
-      <div class="mb-2">
-        <label for="description" class="block text-sm font-medium text-gray-700">Description</label>
-        <textarea id="description" [(ngModel)]="newRecord.description" name="description" class="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md"></textarea>
-      </div>
-      <button type="submit" class="bg-indigo-600 text-white px-4 py-2 rounded-md">Add Record</button>
+      <button type="button" (click)="addNewRecord()" class="bg-green-600 text-white px-4 py-2 rounded-md">Add Another Record</button>
+      <button type="button" (click)="addRecords()" class="bg-indigo-600 text-white px-4 py-2 rounded-md">Add Records</button>
     </form>
   </div>
 
@@ -39,15 +74,45 @@
 
   <div *ngIf="editingRecord">
     <h2 class="text-2xl font-semibold mb-2">Edit Record</h2>
-    <form>
-      <div class="mb-2">
-        <label for="editTitle" class="block text-sm font-medium text-gray-700">Title</label>
-        <input id="editTitle" [(ngModel)]="editingRecord.title" name="editTitle" class="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md">
-      </div>
-      <div class="mb-2">
-        <label for="editDescription" class="block text-sm font-medium text-gray-700">Description</label>
-        <textarea id="editDescription" [(ngModel)]="editingRecord.description" name="editDescription" class="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md"></textarea>
-      </div>
+    <form [formGroup]="recordForm">
+        <div class="mb-2">
+            <label for="title" class="block text-sm font-medium text-gray-700">Title</label>
+            <input id="title" formControlName="title" class="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md">
+        </div>
+        <div class="mb-2">
+            <label for="description" class="block text-sm font-medium text-gray-700">Description</label>
+            <textarea id="description" formControlName="description" class="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md"></textarea>
+        </div>
+        <div class="mb-2">
+            <label for="image" class="block text-sm font-medium text-gray-700">Image URL</label>
+            <input id="image" formControlName="image" class="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md">
+        </div>
+        <div formGroupName="heldBy">
+            <div class="mb-2">
+              <label for="heldByTeam" class="block text-sm font-medium text-gray-700">Held By (Team)</label>
+              <input id="heldByTeam" formControlName="team" class="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md">
+            </div>
+            <div class="mb-2">
+              <label for="heldByPerson" class="block text-sm font-medium text-gray-700">Held By (Person)</label>
+              <input id="heldByPerson" formControlName="person" class="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md">
+            </div>
+            <div class="mb-2">
+              <label for="heldByNation" class="block text-sm font-medium text-gray-700">Held By (Nation)</label>
+              <input id="heldByNation" formControlName="nation" class="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md">
+            </div>
+        </div>
+        <div class="mb-2">
+            <label for="dateRecorded" class="block text-sm font-medium text-gray-700">Date Recorded</label>
+            <input id="dateRecorded" formControlName="dateRecorded" type="date" class="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md">
+        </div>
+        <div class="mb-2">
+            <label for="sources" class="block text-sm font-medium text-gray-700">Sources (comma separated)</label>
+            <input id="sources" formControlName="sources" class="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md">
+        </div>
+        <div class="mb-2">
+            <label for="relatedLinks" class="block text-sm font-medium text-gray-700">Related Links (comma separated)</label>
+            <input id="relatedLinks" formControlName="relatedLinks" class="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md">
+        </div>
       <button type="button" (click)="updateRecord()" class="bg-indigo-600 text-white px-4 py-2 rounded-md">Update Record</button>
       <button type="button" (click)="cancelEdit()" class="bg-red-600 text-white px-4 py-2 rounded-md">Cancel Edit</button>
     </form>

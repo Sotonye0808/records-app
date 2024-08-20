@@ -27,7 +27,7 @@ export class HomeComponent implements OnInit {
     this.collectionNames.forEach((collectionName) => {
       this.fetchRecords(collectionName);
     });
-    console.log('Records:', this.records);
+    // console.log('Records:', this.records); // Debugging log
   }
 
   fetchRecords(collectionName: string): void {
