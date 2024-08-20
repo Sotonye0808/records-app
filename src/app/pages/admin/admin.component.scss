@@ -25,19 +25,3 @@
   .fade-in-up {
     animation: fadeInUp 1s ease-in-out;
   }
-
-  .record-card {
-    @apply m-2 p-2 border border-solid border-gray-300 rounded shadow-md transition-shadow;
-
-    &:hover {
-      @apply shadow-lg;
-    }
-
-    h3 {
-      @apply text-lg font-semibold;
-    }
-
-    p {
-      @apply text-sm;
-    }
-  }
