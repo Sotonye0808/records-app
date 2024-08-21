@@ -174,10 +174,10 @@
         <button type="button" (click)="closeModalDiv()" class="bg-gray-600 text-red px-4 py-2 rounded-md">Cancel <fa-icon [icon]="Cancel">Cancel</fa-icon></button>
         <div *ngIf="!feedbackMessage.toLowerCase().includes('successfully')">
           <!-- Conditionally rendered buttons for executing actions -->
-          <button type="button" (click)="executeAction('delete')" *ngIf="modalMessage.toLowerCase().includes('delete')" class="bg-red-600 text-white px-4 py-2 rounded-md">Delete <fa-icon [icon]="Delete">Delete Record</fa-icon></button>
-          <button type="button" (click)="executeAction('update')" *ngIf="modalMessage.toLowerCase().includes('update')" class="bg-indigo-600 text-white px-4 py-2 rounded-md">Update <fa-icon [icon]="Update">Update Record{{ editingRecords.length === 1 ? '' : 's' }}</fa-icon></button>
-          <button type="button" (click)="executeAction('upload')" *ngIf="modalMessage.toLowerCase().includes('upload')" class="bg-green-600 text-white px-4 py-2 rounded-md">Upload All <fa-icon [icon]="Upload">Add All Records</fa-icon></button>
-          <button type="button" (click)="executeAction('cancel')" *ngIf="modalMessage.toLowerCase().includes('cancel')" class="bg-red-600 text-white px-4 py-2 rounded-md">Cancel <fa-icon [icon]="Edit">Edit</fa-icon></button>
+          <button type="button" (click)="executeAction('delete')" [disabled]="executingAction" *ngIf="modalMessage.toLowerCase().includes('delete')" class="bg-red-600 text-white px-4 py-2 rounded-md">Delete <fa-icon [icon]="Delete">Delete Record</fa-icon></button>
+          <button type="button" (click)="executeAction('update')" [disabled]="executingAction" *ngIf="modalMessage.toLowerCase().includes('update')" class="bg-indigo-600 text-white px-4 py-2 rounded-md">Update <fa-icon [icon]="Update">Update Record{{ editingRecords.length === 1 ? '' : 's' }}</fa-icon></button>
+          <button type="button" (click)="executeAction('upload')" [disabled]="executingAction" *ngIf="modalMessage.toLowerCase().includes('upload')" class="bg-green-600 text-white px-4 py-2 rounded-md">Upload All <fa-icon [icon]="Upload">Add All Records</fa-icon></button>
+          <button type="button" (click)="executeAction('cancel')" [disabled]="executingAction" *ngIf="modalMessage.toLowerCase().includes('cancel')" class="bg-red-600 text-white px-4 py-2 rounded-md">Cancel <fa-icon [icon]="Edit">Edit</fa-icon></button>
           <!---->
         </div>
       </div>
