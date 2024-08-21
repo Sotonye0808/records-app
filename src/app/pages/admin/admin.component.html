@@ -1,120 +1,187 @@
-<p>admin works!</p>
+<p>admin works!</p> <!-- Don't remove -->
 <div class="mt-12 md:mt-8  mx-auto p-4 fade-in-up transition delay-150 duration-300 ease-in-out">
   <h1 class="text-3xl font-bold mb-4">Admin Panel</h1>
   
-  <div class="mb-4">
-    <label for="collectionSelect" class="block text-sm font-medium text-gray-700">Select Collection</label>
-    <select id="collectionSelect" [(ngModel)]="selectedCollection" (change)="fetchRecords()" class="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md">
-      <option *ngFor="let collectionName of collectionNames" [value]="collectionName">{{ getCollectionTitle(collectionName) }}</option>
-    </select>
-  </div>
+  <section>
+    <div class="mb-4">
+      <label for="collectionSelect" class="block text-sm font-medium text-gray-700 dark:text-gray-400">Select Collection</label>
+      <select id="collectionSelect" [(ngModel)]="selectedCollection" (change)="fetchRecords()" class="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-500 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md">
+        <option *ngFor="let collectionName of collectionNames" [value]="collectionName">{{ getCollectionTitle(collectionName) }}</option>
+      </select>
+    </div>
+  </section>
 
-  <div class="mb-4">
-    <h2 class="text-2xl font-semibold mb-2">Add New Records</h2>
-    <form [formGroup]="recordForm">
-      <div *ngFor="let recordForm of newRecords; let i = index" [formGroup]="recordForm" class="mb-4 p-4 border rounded-md">
-        <h3 class="text-xl font-semibold mb-2">Record {{ i + 1 }}</h3>
-        <div class="mb-2">
-          <label for="title-{{i}}" class="block text-sm font-medium text-gray-700">Title</label>
-          <input id="title-{{i}}" formControlName="title" class="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md">
-        </div>
-        <div class="mb-2">
-          <label for="description-{{i}}" class="block text-sm font-medium text-gray-700">Description</label>
-          <textarea id="description-{{i}}" formControlName="description" class="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md"></textarea>
-        </div>
-        <div class="mb-2">
-          <label for="image-{{i}}" class="block text-sm font-medium text-gray-700">Image URL</label>
-          <input id="image-{{i}}" formControlName="image" class="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md">
-        </div>
-        <div formGroupName="heldBy">
-            <div class="mb-2">
-              <label for="heldByTeam-{{i}}" class="block text-sm font-medium text-gray-700">Held By (Team)</label>
-              <input id="heldByTeam-{{i}}" formControlName="team" class="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md">
+  <section>
+    <div class="mb-4">
+      <h2 class="text-2xl font-semibold mb-2">Add New Records</h2>
+      <form [formGroup]="recordForm" (input)="saveFormsData('newRecords')">
+        <div *ngFor="let recordForm of newRecords; let i = index" [formGroup]="recordForm" class="mb-4 p-4 border rounded-md">
+          <h3 class="text-xl font-semibold mb-2">Record {{ i + 1 }}</h3>
+          <div class="mb-2">
+            <label for="title-{{i}}" class="block text-sm font-medium text-gray-700 dark:text-gray-400">Title</label>
+            <input id="title-{{i}}" formControlName="title" class="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-500 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md">
+          </div>
+          <div class="mb-2">
+            <label for="description-{{i}}" class="block text-sm font-medium text-gray-700 dark:text-gray-400">Description</label>
+            <textarea id="description-{{i}}" formControlName="description" class="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-500 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md"></textarea>
+          </div>
+          <div class="mb-2">
+            <label for="image-{{i}}" class="block text-sm font-medium text-gray-700 dark:text-gray-400">Image URL</label>
+            <input id="image-{{i}}" formControlName="image" class="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-500 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md">
+          </div>
+          <div formGroupName="heldBy">
+              <div class="mb-2">
+                <label for="heldByTeam-{{i}}" class="block text-sm font-medium text-gray-700 dark:text-gray-400">Held By (Team)</label>
+                <input id="heldByTeam-{{i}}" formControlName="team" class="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-500 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md">
+              </div>
+              <div class="mb-2">
+                <label for="heldByPerson-{{i}}" class="block text-sm font-medium text-gray-700 dark:text-gray-400">Held By (Person)</label>
+                <input id="heldByPerson-{{i}}" formControlName="person" class="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-500 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md">
+              </div>
+              <div class="mb-2">
+                <label for="heldByNation-{{i}}" class="block text-sm font-medium text-gray-700 dark:text-gray-400">Held By (Nation)</label>
+                <input id="heldByNation-{{i}}" formControlName="nation" class="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-500 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md">
+              </div>
             </div>
-            <div class="mb-2">
-              <label for="heldByPerson-{{i}}" class="block text-sm font-medium text-gray-700">Held By (Person)</label>
-              <input id="heldByPerson-{{i}}" formControlName="person" class="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md">
+          <div class="mb-2">
+            <label for="dateRecorded-{{i}}" class="block text-sm font-medium text-gray-700 dark:text-gray-400">Date Recorded</label>
+            <input id="dateRecorded-{{i}}" formControlName="dateRecorded" type="date" class="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-500 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md">
+          </div>
+          <div class="mb-2">
+            <label for="sources-{{i}}" class="block text-sm font-medium text-gray-700 dark:text-gray-400">Sources (comma separated)</label>
+            <input id="sources-{{i}}" formControlName="sources" class="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-500 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md">
+          </div>
+          <div class="mb-2">
+            <label for="relatedLinks-{{i}}" class="block text-sm font-medium text-gray-700 dark:text-gray-400">Related Links (comma separated)</label>
+            <input id="relatedLinks-{{i}}" formControlName="relatedLinks" class="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-500 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md">
+          </div>
+          <button *ngIf="i !== 0" type="button" (click)="removeRecord(i)" class="bg-red-600 text-white px-4 py-2 rounded-md">Remove Record</button>
+        </div>
+        <div class="flex justify-between">
+          <button type="button" (click)="addNewRecord()" class="bg-indigo-600 text-white px-4 py-2 rounded-md"><fa-icon [icon]="Add">Include Another Record</fa-icon></button>
+          <button type="button" (click)="showModalDiv('upload')" class="bg-green-600 text-white px-4 py-2 rounded-md">Upload All <fa-icon [icon]="Upload">Add All Records</fa-icon></button>
+        </div>
+      </form>
+    </div>
+  </section>
+
+  <section>
+    <h2 class="text-2xl font-semibold mb-2">Manage Records</h2>
+    <div *ngIf="!loadingRecords; else loading">
+      <div *ngIf="records[selectedCollection] && records[selectedCollection].length > 0; else noRecords">
+        <div class="lg:grid grid-cols-2 gap-4">
+          <div *ngFor="let record of records[selectedCollection]" class="mb-4 p-4 border border-thin border-gray-600  shadow hover:shadow-md hover:shadow-indigo-400 shadow-indigo-300 dark:shadow-indigo-600 rounded-md">
+            <h3 class="text-2xl font-bold">{{ record._id }}</h3>
+            <div class="grid grid-cols-2 gap-2">
+              <div class="p-1 m-1">
+                <h3 class="text-xl font-semibold">{{ record.title }}</h3>
+                <p class="text-ellipsis">{{ record.description }}</p>
+              </div>
+              <div class="w-full flex justify-end items-end">
+                <img [src]="record.image" [alt]="'Image for ' + record.title" class="record-image" />
+              </div>
+              <span class="text-4xl font-bold pb-3 text-center col-span-2">. . .</span>
             </div>
-            <div class="mb-2">
-              <label for="heldByNation-{{i}}" class="block text-sm font-medium text-gray-700">Held By (Nation)</label>
-              <input id="heldByNation-{{i}}" formControlName="nation" class="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md">
+            <div class="flex justify-between">
+              <button type="button" (click)="editRecord(record)" class="bg-yellow-500 text-white px-4 py-2 rounded-md mr-2"><fa-icon [icon]="Edit">Edit</fa-icon></button>
+              <button type="button" (click)="showModalDiv('delete', record)" class="bg-red-600 text-white px-4 py-2 rounded-md"><fa-icon [icon]="Delete">Delete</fa-icon></button>
             </div>
           </div>
-        <div class="mb-2">
-          <label for="dateRecorded-{{i}}" class="block text-sm font-medium text-gray-700">Date Recorded</label>
-          <input id="dateRecorded-{{i}}" formControlName="dateRecorded" type="date" class="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md">
         </div>
-        <div class="mb-2">
-          <label for="sources-{{i}}" class="block text-sm font-medium text-gray-700">Sources (comma separated)</label>
-          <input id="sources-{{i}}" formControlName="sources" class="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md">
-        </div>
-        <div class="mb-2">
-          <label for="relatedLinks-{{i}}" class="block text-sm font-medium text-gray-700">Related Links (comma separated)</label>
-          <input id="relatedLinks-{{i}}" formControlName="relatedLinks" class="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md">
-        </div>
-        <button type="button" (click)="removeRecord(i)" class="bg-red-600 text-white px-4 py-2 rounded-md">Remove Record</button>
       </div>
-      <button type="button" (click)="addNewRecord()" class="bg-green-600 text-white px-4 py-2 rounded-md">Add Another Record</button>
-      <button type="button" (click)="addRecords()" class="bg-indigo-600 text-white px-4 py-2 rounded-md">Add Records</button>
-    </form>
-  </div>
-
-  <div *ngIf="records[selectedCollection] && records[selectedCollection].length > 0; else noRecords">
-    <h2 class="text-2xl font-semibold mb-2">Manage Records</h2>
-    <div *ngFor="let record of records[selectedCollection]" class="mb-4 p-4 border rounded-md">
-      <h3 class="text-xl font-semibold">{{ record.title }}</h3>
-      <p>{{ record.description }}</p>
-      <button (click)="editRecord(record)" class="bg-yellow-500 text-white px-4 py-2 rounded-md mr-2">Edit</button>
-      <button (click)="deleteRecord(record._id)" class="bg-red-600 text-white px-4 py-2 rounded-md">Delete</button>
+      <ng-template #noRecords>
+        <p>No records found.</p>
+      </ng-template>
     </div>
-  </div>
-  <ng-template #noRecords>
-    <p>No records found.</p>
-  </ng-template>
+    <ng-template #loading>
+      <div class="flex justify-center items-center w-full my-8">
+        <app-loader></app-loader>
+      </div>
+    </ng-template>
+  </section>
 
-  <div *ngIf="editingRecord">
-    <h2 class="text-2xl font-semibold mb-2">Edit Record</h2>
-    <form [formGroup]="recordForm">
-        <div class="mb-2">
-            <label for="title" class="block text-sm font-medium text-gray-700">Title</label>
-            <input id="title" formControlName="title" class="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md">
-        </div>
-        <div class="mb-2">
-            <label for="description" class="block text-sm font-medium text-gray-700">Description</label>
-            <textarea id="description" formControlName="description" class="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md"></textarea>
-        </div>
-        <div class="mb-2">
-            <label for="image" class="block text-sm font-medium text-gray-700">Image URL</label>
-            <input id="image" formControlName="image" class="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md">
-        </div>
-        <div formGroupName="heldBy">
+  <section>
+    <ng-container *ngIf="editingRecords.length > 0">
+      <h2 class="text-2xl font-semibold mb-2">Edit Record{{ editingRecords.length === 1 ? '' : 's (' + editingRecords.length + ')' }}</h2>
+      <div *ngFor="let record of editingRecords">
+        <form [formGroup]="recordForms[record._id]" (input)="saveFormsData('editingRecords')" class="m-3 border-y-2">
+          <h3 class="text-xl font-semibold mb-2">Record {{ record._id }}</h3>
+          <div class="mb-2">
+            <label for="title-{{ record._id }}" class="block text-sm font-medium text-gray-700 dark:text-gray-400">Title</label>
+            <input id="title-{{ record._id }}" formControlName="title" class="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-500 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md">
+          </div>
+          <div class="mb-2">
+            <label for="description-{{ record._id }}" class="block text-sm font-medium text-gray-700 dark:text-gray-400">Description</label>
+            <textarea id="description-{{ record._id }}" formControlName="description" class="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-500 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md"></textarea>
+          </div>
+          <div class="mb-2">
+            <label for="image-{{ record._id }}" class="block text-sm font-medium text-gray-700 dark:text-gray-400">Image URL</label>
+            <input id="image-{{ record._id }}" formControlName="image" class="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-500 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md">
+          </div>
+          <div formGroupName="heldBy">
             <div class="mb-2">
-              <label for="heldByTeam" class="block text-sm font-medium text-gray-700">Held By (Team)</label>
-              <input id="heldByTeam" formControlName="team" class="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md">
+              <label for="heldByTeam-{{ record._id }}" class="block text-sm font-medium text-gray-700 dark:text-gray-400">Held By (Team)</label>
+              <input id="heldByTeam-{{ record._id }}" formControlName="team" class="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-500 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md">
             </div>
             <div class="mb-2">
-              <label for="heldByPerson" class="block text-sm font-medium text-gray-700">Held By (Person)</label>
-              <input id="heldByPerson" formControlName="person" class="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md">
+              <label for="heldByPerson-{{ record._id }}" class="block text-sm font-medium text-gray-700 dark:text-gray-400">Held By (Person)</label>
+              <input id="heldByPerson-{{ record._id }}" formControlName="person" class="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-500 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md">
             </div>
             <div class="mb-2">
-              <label for="heldByNation" class="block text-sm font-medium text-gray-700">Held By (Nation)</label>
-              <input id="heldByNation" formControlName="nation" class="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md">
+              <label for="heldByNation-{{ record._id }}" class="block text-sm font-medium text-gray-700 dark:text-gray-400">Held By (Nation)</label>
+              <input id="heldByNation-{{ record._id }}" formControlName="nation" class="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-500 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md">
             </div>
+          </div>
+          <div class="mb-2">
+            <label for="dateRecorded-{{ record._id }}" class="block text-sm font-medium text-gray-700 dark:text-gray-400">Date Recorded</label>
+            <input id="dateRecorded-{{ record._id }}" formControlName="dateRecorded" type="date" class="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-500 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md">
+          </div>
+          <div class="mb-2">
+            <label for="sources-{{ record._id }}" class="block text-sm font-medium text-gray-700 dark:text-gray-400">Sources (comma separated)</label>
+            <input id="sources-{{ record._id }}" formControlName="sources" class="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-500 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md">
+          </div>
+          <div class="mb-2">
+            <label for="relatedLinks-{{ record._id }}" class="block text-sm font-medium text-gray-700 dark:text-gray-400">Related Links (comma separated)</label>
+            <input id="relatedLinks-{{ record._id }}" formControlName="relatedLinks" class="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-500 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md">
+          </div>
+        </form>
+      </div>
+      <div class="flex justify-between">
+        <button type="button" (click)="showModalDiv('update')" class="bg-indigo-600 text-white px-4 py-2 rounded-md">Update <fa-icon [icon]="Update">Update Records</fa-icon></button>
+        <button type="button" (click)="showModalDiv('cancel')" class="bg-red-600 text-white px-4 py-2 rounded-md">Cancel <fa-icon [icon]="Edit">Cancel Editing</fa-icon></button>
+      </div>
+    </ng-container>
+  </section>
+
+  <section *ngIf="showModal" id="modal" class="modal">
+    <div class="modal-content">
+      <h2>Confirm Action</h2>
+      <span class="close" (click)="closeModalDiv()"><fa-icon [icon]="Close">Close</fa-icon></span>
+      <p>{{ modalMessage }}</p>
+
+      <div class="action-feedback">
+        <app-loader *ngIf="executingAction"></app-loader>
+        <span *ngIf="icon" class="icon" [ngClass]="feedbackMessage !== '' && feedbackMessage.toLowerCase().includes('successfully') ? 'text-green-600' : 'text-red-600'">
+          <fa-icon [icon]="icon">Feedback</fa-icon>
+        </span>
+        <p class="feedback" *ngIf="feedbackMessage !== ''">{{ feedbackMessage }}</p>
+        <ul class="errors-list" *ngIf="errorMessages.length > 0">
+          <li class="error" *ngFor="let errorMessage of errorMessages">{{ errorMessage }}</li>
+        </ul>
+      </div>
+      
+      <div class="modal-buttons">
+        <button type="button" (click)="closeModalDiv()" class="bg-gray-600 text-red px-4 py-2 rounded-md">Cancel <fa-icon [icon]="Cancel">Cancel</fa-icon></button>
+        <div *ngIf="!feedbackMessage.toLowerCase().includes('successfully')">
+          <!-- Conditionally rendered buttons for executing actions -->
+          <button type="button" (click)="executeAction('delete')" *ngIf="modalMessage.toLowerCase().includes('delete')" class="bg-red-600 text-white px-4 py-2 rounded-md">Delete <fa-icon [icon]="Delete">Delete Record</fa-icon></button>
+          <button type="button" (click)="executeAction('update')" *ngIf="modalMessage.toLowerCase().includes('update')" class="bg-indigo-600 text-white px-4 py-2 rounded-md">Update <fa-icon [icon]="Update">Update Record{{ editingRecords.length === 1 ? '' : 's' }}</fa-icon></button>
+          <button type="button" (click)="executeAction('upload')" *ngIf="modalMessage.toLowerCase().includes('upload')" class="bg-green-600 text-white px-4 py-2 rounded-md">Upload All <fa-icon [icon]="Upload">Add All Records</fa-icon></button>
+          <button type="button" (click)="executeAction('cancel')" *ngIf="modalMessage.toLowerCase().includes('cancel')" class="bg-red-600 text-white px-4 py-2 rounded-md">Cancel <fa-icon [icon]="Edit">Edit</fa-icon></button>
+          <!---->
         </div>
-        <div class="mb-2">
-            <label for="dateRecorded" class="block text-sm font-medium text-gray-700">Date Recorded</label>
-            <input id="dateRecorded" formControlName="dateRecorded" type="date" class="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md">
-        </div>
-        <div class="mb-2">
-            <label for="sources" class="block text-sm font-medium text-gray-700">Sources (comma separated)</label>
-            <input id="sources" formControlName="sources" class="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md">
-        </div>
-        <div class="mb-2">
-            <label for="relatedLinks" class="block text-sm font-medium text-gray-700">Related Links (comma separated)</label>
-            <input id="relatedLinks" formControlName="relatedLinks" class="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md">
-        </div>
-      <button type="button" (click)="updateRecord()" class="bg-indigo-600 text-white px-4 py-2 rounded-md">Update Record</button>
-      <button type="button" (click)="cancelEdit()" class="bg-red-600 text-white px-4 py-2 rounded-md">Cancel Edit</button>
-    </form>
-  </div>
+      </div>
+    </div>
+  </section>
+
 </div>

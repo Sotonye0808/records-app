@@ -4,44 +4,59 @@
       <p class="text-lg text-gray-400 dark:text-gray-600">Your ultimate source for global records in various domains.</p>
     </div>
     
-    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 text-gray-200">
-      <div *ngFor="let collectionName of collectionNames" class="bg-indigo-800 p-6 rounded-lg shadow-lg" [ngClass]="showRecordsTracker[collectionName] ? 'col-span-1 md:col-span-2 lg:col-span-3' : ''">
-        <h2 class="text-2xl font-semibold mb-2">{{ getCollectionTitle(collectionName) }}</h2>
-        <p class="text-gray-400">{{ getCollectionDescription(collectionName) }}</p>
-        <button (click)="showRecords(collectionName)" class="p-2 m-1 bg-blue-700 hover:bg-opacity-80 text-white rounded-md">{{showRecordsTracker[collectionName] ? 'Hide' : 'Show'}} Records</button>
-        <div *ngIf="showRecordsTracker[collectionName]">
-          <div *ngIf="records[collectionName] && records[collectionName].length > 0; else noRecords">
-            <div *ngFor="let record of records[collectionName]" class="record-card">
-              <h3><span class="record-label">Title: </span><span class="record-value">{{ record.title }}</span></h3>
-              <img [src]="record.image" [alt]="'Image for ' + record.title" class="record-image" />
-              <p><span class="record-label">Held By <span class="text-xs font-thin">(Team)</span>: </span><span class="record-value">{{ record.heldBy?.team || 'Nil' }}</span></p>
-              <p><span class="record-label">Held By <span class="text-xs font-thin">(Person)</span>: </span><span class="record-value">{{ record.heldBy?.person || 'Nil' }}</span></p>
-              <p><span class="record-label">Held By <span class="text-xs font-thin">(Nation)</span>: </span><span class="record-value">{{ record.heldBy?.nation || 'Nil' }}</span></p>
-              <p><span class="record-label">Description: </span><span class="record-value">{{ record.description }}</span></p>
-              <p><span class="record-label">Date recorded: </span><span class="record-value">{{ record.dateRecorded | date: 'medium' }}</span></p>
-              <div class="sources">
-                <h4>Sources</h4>
-                <ul>
-                  <li *ngFor="let source of record.sources">
-                    <a [href]="source" target="_blank">{{ source }}</a>
-                  </li>
-                </ul>
+    <div *ngIf="!loadingRecords; else loading">
+      <div *ngIf="!errorLoading; else error">
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 text-gray-200">
+          <div *ngFor="let collectionName of collectionNames" class="bg-indigo-800 p-6 rounded-lg shadow-lg" [ngClass]="showRecordsTracker[collectionName] ? 'col-span-1 md:col-span-2 lg:col-span-3' : ''">
+            <h2 class="text-2xl font-semibold mb-2">{{ getCollectionTitle(collectionName) }}</h2>
+            <p class="text-gray-400">{{ getCollectionDescription(collectionName) }}</p>
+            <button (click)="showRecords(collectionName)" class="p-2 m-1 bg-blue-700 hover:bg-opacity-80 text-white rounded-md">{{showRecordsTracker[collectionName] ? 'Hide' : 'Show'}} Records</button>
+            <div *ngIf="showRecordsTracker[collectionName]">
+              <div *ngIf="records[collectionName] && records[collectionName].length > 0; else noRecords">
+                <div *ngFor="let record of records[collectionName]" class="record-card">
+                  <h3><span class="record-label">Title: </span><span class="record-value">{{ record.title }}</span></h3>
+                  <img [src]="record.image" [alt]="'Image for ' + record.title" class="record-image" />
+                  <p><span class="record-label">Held By <span class="text-xs font-thin">(Team)</span>: </span><span class="record-value">{{ record.heldBy?.team || 'Nil' }}</span></p>
+                  <p><span class="record-label">Held By <span class="text-xs font-thin">(Person)</span>: </span><span class="record-value">{{ record.heldBy?.person || 'Nil' }}</span></p>
+                  <p><span class="record-label">Held By <span class="text-xs font-thin">(Nation)</span>: </span><span class="record-value">{{ record.heldBy?.nation || 'Nil' }}</span></p>
+                  <p><span class="record-label">Description: </span><span class="record-value">{{ record.description }}</span></p>
+                  <p><span class="record-label">Date recorded: </span><span class="record-value">{{ record.dateRecorded | date: 'medium' }}</span></p>
+                  <div class="sources">
+                    <h4>Sources</h4>
+                    <ul>
+                      <li *ngFor="let source of record.sources">
+                        <a [href]="source" target="_blank">{{ source }}</a>
+                      </li>
+                    </ul>
+                  </div>
+                  <div class="related-links">
+                    <h4>Related Links</h4>
+                    <ul>
+                      <li *ngFor="let relatedLink of record.relatedLinks">
+                        <a [href]="relatedLink" target="_blank">{{ relatedLink }}</a>
+                      </li>
+                    </ul>
+                  </div>
+                </div>
               </div>
-              <div class="related-links">
-                <h4>Related Links</h4>
-                <ul>
-                  <li *ngFor="let relatedLink of record.relatedLinks">
-                    <a [href]="relatedLink" target="_blank">{{ relatedLink }}</a>
-                  </li>
-                </ul>
-              </div>
+              <ng-template #noRecords>
+                <p>No records found.</p>
+              </ng-template>
             </div>
           </div>
-          <ng-template #noRecords>
-            <p>No records found.</p>
-          </ng-template>
         </div>
       </div>
+      <ng-template #error>
+        <div class="flex justify-center items-center w-full temp-height my-16 text-2xl text-red-600 capitalize">
+          {{errorMessage}}
+        </div>
+      </ng-template>
     </div>
+
+    <ng-template #loading>
+      <div class="flex justify-center items-center w-full temp-height my-16">
+        <app-loader></app-loader>
+      </div>
+    </ng-template>
   </section>
   

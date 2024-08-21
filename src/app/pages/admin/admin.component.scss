@@ -25,3 +25,65 @@
   .fade-in-up {
     animation: fadeInUp 1s ease-in-out;
   }
+
+  $fadeInUp: fadeInUp 0.5s ease-in-out;
+
+  button, .close {
+    @apply hover:opacity-85 hover:scale-105;
+  }
+
+  input, select, textarea {
+    @apply w-full p-2 border border-solid bg-gray-300 dark:bg-gray-800;
+  }
+
+  .record-image {
+    @apply object-cover rounded w-32 h-32;
+  }
+
+  .modal {
+    animation: $fadeInUp;
+    @apply fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-80;
+  
+    .modal-content {
+      max-height: 70vh;
+      @apply w-full m-4 p-4 bg-white dark:bg-gray-700 rounded shadow-lg overflow-y-auto relative;
+    }
+
+    h2 {
+      @apply text-2xl font-bold absolute top-0 left-0 m-2;
+    }
+
+    p {
+      @apply my-4 mx-2 p-2 text-lg text-center font-semibold;
+    }
+  
+    .close {
+      @apply absolute top-0 right-0 m-2 px-2 cursor-pointer text-3xl text-center text-white bg-red-500 rounded-full;
+    }
+    
+    .modal-buttons {
+      @apply mt-8 flex justify-between gap-4;
+    }
+  }
+
+  .action-feedback {
+    animation: $fadeInUp;
+
+    @apply flex flex-col items-center justify-center gap-4 p-4 text-lg font-semibold text-center;
+    
+    .icon {
+      @apply text-7xl;
+    }
+
+    .feedback {
+      @apply text-2xl capitalize;
+    }
+
+    .errors-list {
+      @apply w-full max-h-44 p-2 border border-red-400 rounded-md overflow-y-auto flex flex-col-reverse;
+    }
+
+    .error {
+      @apply my-2 text-red-500;
+    }
+  }

@@ -1,7 +1,11 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { RecordsService } from '../../services/record.service';
+import { LoaderComponent } from '../../components/loader/loader.component';
 import { CommonModule } from '@angular/common';
 import { FormsModule, ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
+import { faEdit, faTrash, faAdd, faUpload, faCancel, faFileUpload, faClose, faFaceSadCry } from '@fortawesome/free-solid-svg-icons';
+import { faCheckSquare } from '@fortawesome/free-regular-svg-icons';
 
 @Component({
   selector: 'app-admin',
@@ -9,29 +13,57 @@ import { FormsModule, ReactiveFormsModule, FormBuilder, FormGroup, Validators } 
   imports: [
     CommonModule,
     FormsModule,
-    ReactiveFormsModule
+    ReactiveFormsModule,
+    FontAwesomeModule,
+    LoaderComponent
   ],
   templateUrl: './admin.component.html',
   styleUrls: ['./admin.component.scss']
 })
-export class AdminComponent implements OnInit {
+export class AdminComponent implements OnInit, OnDestroy {
   collectionNames: string[] = ['guinnessRecords', 'f1Records', 'footballRecords', 'olympicRecords', 'wweRecords', 'ufcRecords', 'tennisRecords', 'nflRecords', 'nbaRecords', 'boxingRecords'];
   selectedCollection: string = this.collectionNames[0];
+
   records: { [key: string]: any[] } = {};
-  
+
   newRecords: FormGroup[] = [];
-  editingRecord: any = null;
   recordForm: FormGroup;
+
+  editingRecord: any = null; // similar object to records but to keep track of records being edited possibly with boolean values to track if editing form should be displayed
+  editingRecords: any[] = [];
+  recordForms: { [key: string]: FormGroup } = {}; // Add a new property to track form groups for each record
+
+  showModal: boolean = false;
+  modalMessage: string = '';
+  recordForAction: any = null;
+
+  loadingRecords: boolean = true;
+  executingAction: boolean = false;
+  feedbackMessage: string = '';
+  errorMessages: string[] = []; 
+
+  Edit = faEdit;
+  Delete = faTrash;
+  Add = faAdd;
+  Upload = faUpload;
+  Cancel = faCancel;
+  Update = faFileUpload;
+  Close = faClose;
+  Good = faCheckSquare;
+  Bad = faFaceSadCry;
+  icon: any = null;
+
+
 
   constructor(
     private recordsService: RecordsService,
-    private formBuilder: FormBuilder
+    private fb: FormBuilder
   ) {
-    this.recordForm = this.formBuilder.group({
+    this.recordForm = this.fb.group({
       title: ['', Validators.required],
       description: ['', Validators.required],
       image: ['', Validators.required],
-      heldBy: this.formBuilder.group({
+      heldBy: this.fb.group({
         team: ['', Validators.required],
         person: ['', Validators.required],
         nation: ['', Validators.required]
@@ -45,22 +77,29 @@ export class AdminComponent implements OnInit {
   ngOnInit(): void {
     this.fetchRecords();
     this.addNewRecord(); // Initialize with one empty record form
+    this.loadFormsData();
+  }
+
+  ngOnDestroy(): void {
+    this.saveFormsData('all');
   }
 
   fetchRecords(): void {
     this.recordsService.getRecords(this.selectedCollection).then((data) => {
       this.records[this.selectedCollection] = data || [];
+      this.loadingRecords = false;
     }).catch((error) => {
       console.error('Error fetching records:', error);
+      this.errorMessages.push('Error fetching records');
     });
   }
 
   addNewRecord(): void {
-    this.newRecords.push(this.formBuilder.group({
+    this.newRecords.push(this.fb.group({
       title: ['', Validators.required],
       description: ['', Validators.required],
       image: ['', Validators.required],
-      heldBy: this.formBuilder.group({
+      heldBy: this.fb.group({
         team: ['', Validators.required],
         person: ['', Validators.required],
         nation: ['', Validators.required]
@@ -76,50 +115,72 @@ export class AdminComponent implements OnInit {
   }
 
   addRecords(): void {
-    const recordsToAdd = this.newRecords.map(recordForm => {
-      const record = recordForm.value;
-      return {
-        ...record,
-        sources: record.sources?.split(',').map((source: string) => source.trim()),
-        relatedLinks: record.relatedLinks?.split(',').map((link: string) => link.trim())
-      };
-    });
+    // first check if all forms are valid
+    if (this.newRecords.some(recordForm => recordForm.invalid)) {
+      console.error('Invalid form data');
+      this.executingAction = false;
+      this.feedbackMessage = '';
+      this.errorMessages.push('Invalid form data for new record: ' + (this.newRecords.findIndex(recordForm => recordForm.invalid) + 1));
+      this.icon = this.Bad;
+    } else {
+      const recordsToAdd = this.newRecords.map(recordForm => {
+        const record = recordForm.value;
+        return {
+          ...record,
+          sources: record.sources?.split(',').map((source: string) => source.trim()),
+          relatedLinks: record.relatedLinks?.split(',').map((link: string) => link.trim())
+        };
+      });
 
-    // validate recordsToAdd
-    if (recordsToAdd.some(record => !record.title || !record.description || !record.image || !record.heldBy.team || !record.heldBy.person || !record.heldBy.nation || !record.dateRecorded || !record.sources || !record.relatedLinks)) {
-      console.error('All fields are required');
-      return;
+      this.recordsService.addRecords(this.selectedCollection, recordsToAdd).then(() => {
+        this.fetchRecords();
+        this.newRecords = [];
+        this.addNewRecord(); // Add one empty record form after submission
+        this.clearFormsData('newRecords');
+        this.executingAction = false;
+        this.feedbackMessage = 'Records uploaded successfully';
+        this.icon = this.Good;
+      }).catch((error) => {
+        console.error('Error adding records:', error);
+        this.executingAction = false;
+        this.feedbackMessage = '';
+        this.errorMessages.push('Error adding records');
+        this.icon = this.Bad;
+      });
     }
-
-    this.recordsService.addRecords(this.selectedCollection, recordsToAdd).then(() => {
-      this.fetchRecords();
-      this.newRecords = [];
-      this.addNewRecord(); // Add one empty record form after submission
-      
-    }).catch((error) => {
-      console.error('Error adding records:', error);
-    });
   }
 
+  // Modify the editRecord method to handle multiple records
   editRecord(record: any): void {
-    this.editingRecord = { ...record };
-    this.recordForm.patchValue({
-      title: record.title || '',
-      description: record.description || '',
-      image: record.image || '',
-      heldBy: {
-        team: record.heldBy?.team || '',
-        person: record.heldBy?.person || '',
-        nation: record.heldBy?.nation || ''
-      },
-      dateRecorded: record.dateRecorded || '',
-      sources: record.sources?.join(', ') || '',
-      relatedLinks: record.relatedLinks?.join(', ') || ''
-    });
+    const existingRecord = this.editingRecords.find(r => r._id === record._id);
+    if (!existingRecord) {
+      this.editingRecords.push({ ...record });
+    }
+    // Create a new form group for the record if it doesn't exist
+    if (!this.recordForms[record._id]) {
+      this.recordForms[record._id] = this.fb.group({
+        title: [record.title || '', Validators.required],
+        description: [record.description || '', Validators.required],
+        image: [record.image || '', Validators.required],
+        heldBy: this.fb.group({
+          team: [record.heldBy?.team || '', Validators.required],
+          person: [record.heldBy?.person || '', Validators.required],
+          nation: [record.heldBy?.nation || '', Validators.required]
+        }),
+        dateRecorded: [record.dateRecorded || '', Validators.required],
+        sources: [record.sources?.join(', ') || '', Validators.required],
+        relatedLinks: [record.relatedLinks?.join(', ') || '', Validators.required]
+      });
+    }
   }
 
   cancelEdit(): void {
-    this.editingRecord = null;
+    this.editingRecords = [];
+    this.recordForms = {};
+    this.clearFormsData('editingRecords');
+    this.recordForm.reset();
+    this.executingAction = false;
+    this.feedbackMessage = '';
   }
 
   updateRecord(): void {
@@ -139,11 +200,58 @@ export class AdminComponent implements OnInit {
     });
   }
 
+  // Add a method to handle batch updates
+  batchUpdateRecords(): void {
+    // first check if all forms are valid
+    if (this.editingRecords.some(record => this.recordForms[record._id].invalid)) {
+      console.error('Invalid form data');
+      this.executingAction = false;
+      this.feedbackMessage = '';
+      this.errorMessages.push('Invalid form data for editing record with id: ' + (this.editingRecords.find(record => this.recordForms[record._id].invalid)?._id + 1));
+      this.icon = this.Bad;
+    } else {
+      const updatedRecords = this.editingRecords.map(record => {
+        const form = this.recordForms[record._id];
+        return {
+          ...record,
+          ...form.value,
+          sources: form.value.sources?.split(',').map((source: string) => source.trim()),
+          relatedLinks: form.value.relatedLinks?.split(',').map((link: string) => link.trim())
+        };
+      });
+    
+      Promise.all(updatedRecords.map(record => 
+        this.recordsService.updateRecord(this.selectedCollection, record)
+      )).then(() => {
+        this.fetchRecords();
+        this.editingRecords = [];
+        this.recordForms = {};
+        this.clearFormsData('editingRecords');
+        this.executingAction = false;
+        this.feedbackMessage = 'Records updated successfully';
+        this.icon = this.Good;
+      }).catch((error) => {
+        console.error('Error updating records:', error);
+        this.executingAction = false;
+        this.feedbackMessage = '';
+        this.errorMessages.push('Error updating records');
+        this.icon = this.Bad;
+      });
+    }
+  }
+
   deleteRecord(recordId: string): void {
     this.recordsService.deleteRecord(this.selectedCollection, recordId).then(() => {
       this.fetchRecords();
+      this.executingAction = false;
+      this.feedbackMessage = 'Record deleted successfully';
+      this.icon = this.Good;
     }).catch((error) => {
       console.error('Error deleting record:', error);
+      this.executingAction = false;
+      this.feedbackMessage = '';
+      this.errorMessages.push('Error deleting record');
+      this.icon = this.Bad;
     });
   }
 
@@ -161,5 +269,114 @@ export class AdminComponent implements OnInit {
       boxingRecords: 'Boxing'
     };
     return titles[collectionName] || 'Records';
+  }
+
+  showModalDiv(reason: string, record: any = null): void {
+    this.showModal = true;
+    this.feedbackMessage = '';
+    record ? this.recordForAction = record : this.recordForAction = null;
+    if (reason === 'upload') {
+      this.modalMessage = 'Are you sure you want to upload these records?';
+    } else if (reason === 'delete') {
+      this.modalMessage = 'Are you sure you want to delete this record? This cannot be undone.';
+    } else if (reason === 'update') {
+      this.modalMessage = this.editingRecords.length === 1 ? 'Are you sure you want to update this record?' : 'Are you sure you want to update these records?';
+    } else {
+      this.modalMessage = 'Are you sure you want to cancel this operation?';
+    }
+  }
+
+  executeAction(action: string): void {
+    this.executingAction = true;
+    this.feedbackMessage = '';
+    if (action === 'upload') {
+      this.addRecords();
+    } else if (action === 'delete') {
+      this.deleteRecord(this.recordForAction?._id);
+    } else if (action === 'update') {
+      this.batchUpdateRecords();  
+    } else {
+      this.cancelEdit();
+      this.closeModalDiv();
+    }
+  }
+
+  closeModalDiv(): void {
+    this.showModal = false;
+    this.modalMessage = '';
+    this.recordForAction = null;
+  }
+
+    // form retention methods that will be used to retain all forms data by storing them in local storage
+  saveFormsData(form: string): void {
+    if (form === 'all' || form === 'newRecords') {
+      localStorage.setItem('newRecords', JSON.stringify(this.newRecords.map(record => record.value)));
+      console.log('saved new records form state'); // debugging log
+    }
+    if (form === 'all' || form === 'editingRecords') {
+      localStorage.setItem('editingRecords', JSON.stringify(this.editingRecords));
+      const recordFormsValues = Object.keys(this.recordForms).reduce((acc: { [key: string]: any }, key: string) => {
+        acc[key] = this.recordForms[key]?.value;
+        return acc;
+      }, {});
+      localStorage.setItem('recordForms', JSON.stringify(recordFormsValues));
+      console.log('saved editing records form state'); // debugging log
+    }
+  }
+  
+    loadFormsData(): void {
+    // Load newRecords from local storage
+    const newRecordsInit = localStorage.getItem('newRecords') || '';
+    const newRecords = newRecordsInit !== '' ? JSON.parse(newRecordsInit) || [] : [];
+    if (newRecords.length > 0) {
+      this.newRecords = newRecords.map((record: any) => {
+        return this.fb.group({
+          ...record,
+          heldBy: this.fb.group({
+            team: record.heldBy?.team || '',
+            person: record.heldBy?.person || '',
+            nation: record.heldBy?.nation || ''
+          })
+        });
+        });
+    }
+  
+    // Load editingRecords from local storage
+    const editingRecordsInit = localStorage.getItem('editingRecords') || '';
+    const editingRecords = editingRecordsInit !== '' ? JSON.parse(editingRecordsInit) || [] : [];
+    if (editingRecords.length > 0) {
+      this.editingRecords = editingRecords;
+    }
+  
+    // Load recordForms from local storage
+    const recordFormsInit = localStorage.getItem('recordForms') || '';
+    const recordForms = recordFormsInit !== '' ? JSON.parse(recordFormsInit) || {} : {};
+    if (Object.keys(recordForms).length > 0) {
+      this.recordForms = Object.keys(recordForms).reduce((acc: { [key: string]: any }, key: string) => {
+        if (recordForms[key]) {
+          acc[key] = this.fb.group({
+            ...recordForms[key],
+            heldBy: this.fb.group({
+              team: [recordForms[key].heldBy?.team || ''],
+              person: [recordForms[key].heldBy?.person || ''],
+              nation: [recordForms[key].heldBy?.nation || '']
+            })
+          });
+        }
+        return acc;
+      }, {});
+    }
+  }
+
+  clearFormsData(form: string): void {
+    if (form === 'all' || form === 'newRecords') {
+      localStorage.removeItem('newRecords');
+      console.log('cleared new records form state'); // debugging log
+    }
+    if (form === 'all' || form === 'editingRecords') {
+      localStorage.removeItem('editingRecords');
+      localStorage.removeItem('recordForms');
+      console.log('cleared editing records form state'); // debugging log
+    }
   }
 }

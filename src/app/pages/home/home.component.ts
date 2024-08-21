@@ -1,12 +1,17 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RecordsService } from '../../services/record.service';
+import { LoaderComponent } from '../../components/loader/loader.component';
+import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
+import { faWarning } from '@fortawesome/free-solid-svg-icons';
 
 @Component({
   selector: 'app-home',
   standalone: true,
   imports: [
-    CommonModule
+    CommonModule,
+    LoaderComponent,
+    FontAwesomeModule
   ],
   templateUrl: './home.component.html',
   styleUrls: ['./home.component.scss']
@@ -17,21 +22,32 @@ export class HomeComponent implements OnInit {
   records: { [key: string]: any[] } = {};
   showRecordsTracker: { [key: string]: boolean } = {};
 
+   loadingRecords: boolean = true;
+   errorLoading: boolean = false;
+   errorMessage: string = ''; 
+
+   Bad = faWarning;
+  
   constructor(private recordsService: RecordsService) { 
     this.collectionNames.forEach((collectionName) => {
       this.showRecordsTracker[collectionName] = false;
     });
   }
-
+  
   ngOnInit(): void {
-    this.collectionNames.forEach((collectionName) => {
-      this.fetchRecords(collectionName);
-    });
-    // console.log('Records:', this.records); // Debugging log
+    const fetchPromises = this.collectionNames.map((collectionName) => this.fetchRecords(collectionName));
+      Promise.all(fetchPromises).then(() => {
+        this.loadingRecords = false;
+      }).catch((error) => {
+        console.error('Error fetching records:', error);
+        this.errorLoading = true;
+        this.errorMessage = 'Error fetching records. Please try again later.';
+        this.loadingRecords = false; // Optionally set loading to false even if there is an error
+      });
   }
-
-  fetchRecords(collectionName: string): void {
-    this.recordsService.getRecords(collectionName).then((data) => {
+  
+  async fetchRecords(collectionName: string): Promise<void> {
+    return this.recordsService.getRecords(collectionName).then((data) => {
       this.records[collectionName] = data || [];
     }).catch((error) => {
       console.error('Error fetching records:', error);
