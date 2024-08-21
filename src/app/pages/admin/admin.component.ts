@@ -274,6 +274,7 @@ export class AdminComponent implements OnInit, OnDestroy {
   showModalDiv(reason: string, record: any = null): void {
     this.showModal = true;
     this.feedbackMessage = '';
+    this.icon = null;
     record ? this.recordForAction = record : this.recordForAction = null;
     if (reason === 'upload') {
       this.modalMessage = 'Are you sure you want to upload these records?';
@@ -289,6 +290,7 @@ export class AdminComponent implements OnInit, OnDestroy {
   executeAction(action: string): void {
     this.executingAction = true;
     this.feedbackMessage = '';
+    this.icon = null;
     if (action === 'upload') {
       this.addRecords();
     } else if (action === 'delete') {
