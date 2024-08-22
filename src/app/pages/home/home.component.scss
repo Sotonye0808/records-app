@@ -26,50 +26,113 @@
     animation: fadeInUp 1s ease-in-out;
   }
 
+  @keyframes expand {
+    0% {
+      transform: scale(1);
+    }
+    50% {
+      transform: scale(1.05);
+    }
+    100% {
+      transform: scale(1);
+    }
+  }
+  
+  @keyframes contract {
+    0% {
+      transform: scale(1);
+    }
+    50% {
+      transform: scale(0.95);
+    }
+    100% {
+      transform: scale(1);
+    }
+  }
+  
+  .expand {
+    animation: expand 0.5s ease-in-out;
+  }
+
+  .contract {
+    animation: contract 0.5s ease-in-out;
+  }
+
   .record-card {
-    @apply m-2 p-2 border border-solid border-gray-300 rounded shadow-md transition-shadow font-mono;
+    @apply m-2 p-2 border border-solid border-gray-300 rounded shadow-md transition-shadow;
 
     &:hover {
       @apply shadow-lg;
     }
 
-    h3 {
-      .record-label {
-        @apply text-lg font-bold underline;
-      }
-  
-      .record-value {
-        @apply text-2xl capitalize;
+    .top-section {
+      @apply flex justify-between items-center;
+    }
+
+    .bottom-section {
+      @apply mt-4 grid grid-cols-2 gap-4;
+    }
+
+    .record-title {
+      @apply text-xl font-bold text-center w-full capitalize font-serif;
+    }
+
+    .record-date-recorded {
+      @apply text-xs text-stone-500 text-center font-mono;
+    }
+
+    .record-held-by{
+      @apply text-sm text-left font-mono;
+
+      p {
+        .record-label {
+          @apply text-xs font-bold;
+        }
+
+        .record-value {
+          @apply font-serif capitalize;
+        }
       }
     }
 
-    p {
-      .record-label {
-        @apply text-sm font-bold;
-      }
-
-      .record-value {
-        @apply text-xl;
-      }
+    .record-description {
+      @apply text-sm text-pretty capitalize indent-4 font-semibold;
     }
 
     .record-image{
-      max-height: 50vh;
+      @apply w-full flex justify-center items-center rounded mt-2;
 
-      @apply w-full object-cover rounded;
+      img {
+      max-height: 25vh;
+      @apply max-w-full object-cover rounded outline-dashed outline-zinc-400 outline-1 outline-offset-4 border-gray-400 cursor-pointer hover:shadow-lg hover:scale-105 hover:outline-none;
+      }
+    }
+
+    .sources, .related-links {
+      @apply text-gray-500 capitalize text-sm;
+
+      ul {
+        @apply flex flex-wrap gap-2;
+      }
+      
+      .source, .related-link {
+        @apply cursor-pointer text-xs hover:text-sm bg-amber-500 px-1 rounded-full text-zinc-500 hover:text-amber-500 hover:scale-110 hover:bg-cyan-500;
+      }
     }
 
     .sources {
-      @apply text-xs text-gray-500 capitalize;
-      
-      a {
-        @apply text-xs text-blue-500 hover:underline hover:text-blue-700;
+      @apply text-left;
+
+      ul {
+        @apply justify-start;
       }
     }
 
     .related-links {
-      a {
-        @apply text-xs text-blue-500 hover:underline hover:text-blue-700;
+      @apply text-right;
+
+      ul {
+        @apply justify-end;
       }
     }
 

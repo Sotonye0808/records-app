@@ -1,4 +1,4 @@
-<section class="md:p-16 p-8 fade-in-up transition delay-150 duration-300 ease-in-out">
+<section class="md:py-16 py-8 px-4 fade-in-up transition delay-150 duration-300 ease-in-out">
     <div class="mt-12 md:mt-8 text-center mb-8">
       <h1 class="text-4xl font-bold mb-4">Welcome to Record Sphere</h1>
       <p class="text-lg text-gray-400 dark:text-gray-600">Your ultimate source for global records in various domains.</p>
@@ -7,35 +7,51 @@
     <div *ngIf="!loadingRecords; else loading">
       <div *ngIf="!errorLoading; else error">
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 text-gray-200">
-          <div *ngFor="let collectionName of collectionNames" class="bg-indigo-800 p-6 rounded-lg shadow-lg" [ngClass]="showRecordsTracker[collectionName] ? 'col-span-1 md:col-span-2 lg:col-span-3' : ''">
+          <div *ngFor="let collectionName of collectionNames" class="bg-indigo-800 p-6 rounded-lg shadow-lg"  [ngClass]="{
+            'col-span-1 md:col-span-2 lg:col-span-3 expand': showRecordsTracker[collectionName], 
+            'contract': !showRecordsTracker[collectionName]
+          }">
             <h2 class="text-2xl font-semibold mb-2">{{ getCollectionTitle(collectionName) }}</h2>
             <p class="text-gray-400">{{ getCollectionDescription(collectionName) }}</p>
             <button (click)="showRecords(collectionName)" class="p-2 m-1 bg-blue-700 hover:bg-opacity-80 text-white rounded-md">{{showRecordsTracker[collectionName] ? 'Hide' : 'Show'}} Records</button>
             <div *ngIf="showRecordsTracker[collectionName]">
               <div *ngIf="records[collectionName] && records[collectionName].length > 0; else noRecords">
                 <div *ngFor="let record of records[collectionName]" class="record-card">
-                  <h3><span class="record-label">Title: </span><span class="record-value">{{ record.title }}</span></h3>
-                  <img [src]="record.image" [alt]="'Image for ' + record.title" class="record-image" />
-                  <p><span class="record-label">Held By <span class="text-xs font-thin">(Team)</span>: </span><span class="record-value">{{ record.heldBy?.team || 'Nil' }}</span></p>
-                  <p><span class="record-label">Held By <span class="text-xs font-thin">(Person)</span>: </span><span class="record-value">{{ record.heldBy?.person || 'Nil' }}</span></p>
-                  <p><span class="record-label">Held By <span class="text-xs font-thin">(Nation)</span>: </span><span class="record-value">{{ record.heldBy?.nation || 'Nil' }}</span></p>
-                  <p><span class="record-label">Description: </span><span class="record-value">{{ record.description }}</span></p>
-                  <p><span class="record-label">Date recorded: </span><span class="record-value">{{ record.dateRecorded | date: 'medium' }}</span></p>
-                  <div class="sources">
-                    <h4>Sources</h4>
-                    <ul>
-                      <li *ngFor="let source of record.sources">
-                        <a [href]="source" target="_blank">{{ source }}</a>
-                      </li>
-                    </ul>
+                  <div class="top-section">
+                    <h3 class="record-title">{{ record.title }}</h3>
+                    <p class="record-date-recorded">{{ record.dateRecorded | date: 'medium' }}</p>
                   </div>
-                  <div class="related-links">
-                    <h4>Related Links</h4>
-                    <ul>
-                      <li *ngFor="let relatedLink of record.relatedLinks">
-                        <a [href]="relatedLink" target="_blank">{{ relatedLink }}</a>
-                      </li>
-                    </ul>
+                  <div class="record-image">
+                    <img [src]="record.image" [alt]="'Image for ' + record.title" />
+                  </div>
+                  <div class="bottom-section">
+                    <div class="record-held-by">
+                      <p><span class="record-label">Held By <span class="text-xs font-thin">(Team)</span>: </span><span class="record-value">{{ record.heldBy?.team || 'Nil' }}</span></p>
+                      <p><span class="record-label">Held By <span class="text-xs font-thin">(Person)</span>: </span><span class="record-value">{{ record.heldBy?.person || 'Nil' }}</span></p>
+                      <p><span class="record-label">Held By <span class="text-xs font-thin">(Nation)</span>: </span><span class="record-value">{{ record.heldBy?.nation || 'Nil' }}</span></p>
+                    </div>
+
+                    <p class="record-description">
+                      <span class="font-mono">&#x275D;</span> <!--open quote-->
+                      {{ record.description }}
+                      <span class="font-mono">&#x275E;</span></p> <!--close quote-->
+                    
+                    <div class="sources">
+                      <h4>Sources</h4>
+                      <ul>
+                        <li *ngFor="let source of record.sources; let i = index">
+                          <button type="button" class="source"><a [href]="source" target="_blank">{{ i + 1 }}</a></button>
+                        </li>
+                      </ul>
+                    </div>
+                    <div class="related-links">
+                      <h4>Related Links</h4>
+                      <ul>
+                        <li *ngFor="let relatedLink of record.relatedLinks; let i = index">
+                          <button type="button" class="related-link"><a [href]="relatedLink" target="_blank">{{ i + 1 }}</a></button>
+                        </li>
+                      </ul>
+                    </div>
                   </div>
                 </div>
               </div>

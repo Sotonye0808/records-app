@@ -33,6 +33,10 @@
     @apply hover:opacity-85 hover:scale-105;
   }
 
+  button:disabled {
+    @apply opacity-50 cursor-not-allowed;
+  }
+
   input, select, textarea {
     @apply w-full p-2 border border-solid bg-gray-300 dark:bg-gray-800;
   }
