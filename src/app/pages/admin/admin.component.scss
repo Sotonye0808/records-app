@@ -27,6 +27,7 @@
   }
 
   $fadeInUp: fadeInUp 0.5s ease-in-out;
+  $fadeIn: fadeIn 0.5s ease-in-out;
 
   button, .close {
     @apply hover:opacity-85 hover:scale-105;
@@ -54,22 +55,22 @@
     }
 
     p {
-      @apply my-4 mx-2 p-2 text-lg text-center font-semibold;
+      @apply mx-2 p-2 text-lg text-center font-semibold;
     }
   
     .close {
-      @apply absolute top-0 right-0 m-2 px-2 cursor-pointer text-3xl text-center text-white bg-red-500 rounded-full;
+      @apply absolute top-0 right-0 mx-1 cursor-pointer text-xl text-center text-red-500 rounded-full;
     }
     
     .modal-buttons {
-      @apply mt-8 flex justify-between gap-4;
+      @apply mt-2 flex justify-between gap-4;
     }
   }
 
   .action-feedback {
     animation: $fadeInUp;
 
-    @apply flex flex-col items-center justify-center gap-4 p-4 text-lg font-semibold text-center;
+    @apply flex flex-col items-center justify-center gap-4 p-4 text-lg font-semibold text-center h-fit mt-4;
     
     .icon {
       @apply text-7xl;
@@ -86,4 +87,11 @@
     .error {
       @apply my-2 text-red-500;
     }
+  }
+
+  .editing-form-container, .adding-form-container {
+    animation: $fadeIn;
+
+    max-height: 200vh;
+    overflow-y: auto;
   }

@@ -1,10 +1,11 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { RecordsService } from '../../services/record.service';
+import { RecordsStateService } from '../../services/records-state.service';
 import { LoaderComponent } from '../../components/loader/loader.component';
 import { CommonModule } from '@angular/common';
 import { FormsModule, ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
-import { faEdit, faTrash, faAdd, faUpload, faCancel, faFileUpload, faClose, faFaceSadCry } from '@fortawesome/free-solid-svg-icons';
+import { faEdit, faTrash, faAdd, faUpload, faCancel, faFileUpload, faCircleXmark, faFaceSadCry, faWarning, faMinus, faRecycle } from '@fortawesome/free-solid-svg-icons';
 import { faCheckSquare } from '@fortawesome/free-regular-svg-icons';
 
 @Component({
@@ -45,18 +46,22 @@ export class AdminComponent implements OnInit, OnDestroy {
   Edit = faEdit;
   Delete = faTrash;
   Add = faAdd;
+  Minus = faMinus;
   Upload = faUpload;
   Cancel = faCancel;
   Update = faFileUpload;
-  Close = faClose;
+  Close = faCircleXmark;
   Good = faCheckSquare;
   Bad = faFaceSadCry;
+  Warning = faWarning;
+  Bin = faRecycle;
   icon: any = null;
 
 
 
   constructor(
     private recordsService: RecordsService,
+    private recordsStateService: RecordsStateService,
     private fb: FormBuilder
   ) {
     this.recordForm = this.fb.group({
@@ -85,17 +90,31 @@ export class AdminComponent implements OnInit, OnDestroy {
   }
 
   fetchRecords(): void {
-    this.recordsService.getRecords(this.selectedCollection).then((data) => {
-      this.records[this.selectedCollection] = data || [];
-      this.loadingRecords = false;
-    }).catch((error) => {
+    try {
+      this.recordsStateService.records$.subscribe((records) => {
+        this.records = records;
+      });
+
+      this.recordsStateService.loading$.subscribe((loading) => {
+        this.loadingRecords = loading;
+      });
+
+      this.recordsStateService.errorLoading$.subscribe((errorLoading) => {
+        if (errorLoading) {
+          this.errorMessages.push('Failed to load records. Please try again later.');
+          this.icon = this.Bad;
+        }
+      });
+    } catch (error) {
       console.error('Error fetching records:', error);
+      this.loadingRecords = false;
       this.errorMessages.push('Error fetching records');
-    });
+      this.icon = this.Bad;
+    }
   }
 
   addNewRecord(): void {
-    this.newRecords.push(this.fb.group({
+    const newRecordForm = this.fb.group({
       title: ['', Validators.required],
       description: ['', Validators.required],
       image: ['', Validators.required],
@@ -107,7 +126,9 @@ export class AdminComponent implements OnInit, OnDestroy {
       dateRecorded: ['', Validators.required],
       sources: ['', Validators.required],
       relatedLinks: ['', Validators.required]
-    }));
+    });
+
+    this.newRecords.push(newRecordForm);
   }
 
   removeRecord(index: number): void {
@@ -133,7 +154,7 @@ export class AdminComponent implements OnInit, OnDestroy {
       });
 
       this.recordsService.addRecords(this.selectedCollection, recordsToAdd).then(() => {
-        this.fetchRecords();
+        recordsToAdd.forEach(record => this.recordsStateService.addRecord(this.selectedCollection, record));
         this.newRecords = [];
         this.addNewRecord(); // Add one empty record form after submission
         this.clearFormsData('newRecords');
@@ -172,6 +193,25 @@ export class AdminComponent implements OnInit, OnDestroy {
         relatedLinks: [record.relatedLinks?.join(', ') || '', Validators.required]
       });
     }
+
+    setTimeout(() => {
+      this.scrollToForm('editingFormForRecord' + record._id);
+    }, 100);
+  }
+
+  scrollToForm(id: string): void {
+    const form = document.getElementById(id);
+    if (form) {
+      form.scrollIntoView({ behavior: 'smooth' });
+    }
+  }
+
+  removeEditingRecord(index: number, id: any): void {
+    this.editingRecords.splice(index, 1);
+    // Remove the corresponding entry from recordForms
+    delete this.recordForms[id];
+
+    this.saveFormsData('editingRecords');
   }
 
   cancelEdit(): void {
@@ -192,7 +232,7 @@ export class AdminComponent implements OnInit, OnDestroy {
     };
 
     this.recordsService.updateRecord(this.selectedCollection, updatedRecord).then(() => {
-      this.fetchRecords();
+      this.recordsStateService.updateRecord(this.selectedCollection, updatedRecord);
       this.editingRecord = null;
       this.recordForm.reset();
     }).catch((error) => {
@@ -223,7 +263,7 @@ export class AdminComponent implements OnInit, OnDestroy {
       Promise.all(updatedRecords.map(record => 
         this.recordsService.updateRecord(this.selectedCollection, record)
       )).then(() => {
-        this.fetchRecords();
+        updatedRecords.forEach(record => this.recordsStateService.updateRecord(this.selectedCollection, record));
         this.editingRecords = [];
         this.recordForms = {};
         this.clearFormsData('editingRecords');
@@ -242,7 +282,7 @@ export class AdminComponent implements OnInit, OnDestroy {
 
   deleteRecord(recordId: string): void {
     this.recordsService.deleteRecord(this.selectedCollection, recordId).then(() => {
-      this.fetchRecords();
+      this.recordsStateService.deleteRecord(this.selectedCollection, recordId);
       this.executingAction = false;
       this.feedbackMessage = 'Record deleted successfully';
       this.icon = this.Good;
@@ -309,11 +349,15 @@ export class AdminComponent implements OnInit, OnDestroy {
     this.recordForAction = null;
   }
 
+  clearErrorMessagesLogs(): void {
+    this.errorMessages = [];
+  }
+
     // form retention methods that will be used to retain all forms data by storing them in local storage
   saveFormsData(form: string): void {
     if (form === 'all' || form === 'newRecords') {
       localStorage.setItem('newRecords', JSON.stringify(this.newRecords.map(record => record.value)));
-      console.log('saved new records form state'); // debugging log
+      // console.log('saved new records form state'); // debugging log
     }
     if (form === 'all' || form === 'editingRecords') {
       localStorage.setItem('editingRecords', JSON.stringify(this.editingRecords));
@@ -322,7 +366,7 @@ export class AdminComponent implements OnInit, OnDestroy {
         return acc;
       }, {});
       localStorage.setItem('recordForms', JSON.stringify(recordFormsValues));
-      console.log('saved editing records form state'); // debugging log
+      // console.log('saved editing records form state'); // debugging log
     }
   }
   
@@ -373,12 +417,12 @@ export class AdminComponent implements OnInit, OnDestroy {
   clearFormsData(form: string): void {
     if (form === 'all' || form === 'newRecords') {
       localStorage.removeItem('newRecords');
-      console.log('cleared new records form state'); // debugging log
+      // console.log('cleared new records form state'); // debugging log
     }
     if (form === 'all' || form === 'editingRecords') {
       localStorage.removeItem('editingRecords');
       localStorage.removeItem('recordForms');
-      console.log('cleared editing records form state'); // debugging log
+      // console.log('cleared editing records form state'); // debugging log
     }
   }
 }

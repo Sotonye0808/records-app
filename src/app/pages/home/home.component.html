@@ -48,7 +48,10 @@
       </div>
       <ng-template #error>
         <div class="flex justify-center items-center w-full temp-height my-16 text-2xl text-red-600 capitalize">
-          {{errorMessage}}
+          <span class="text-5xl">
+            <fa-icon [icon]="Bad"></fa-icon>
+          </span>
+          <span>{{errorMessage}}</span>
         </div>
       </ng-template>
     </div>
@@ -59,4 +62,7 @@
       </div>
     </ng-template>
   </section>
+
+  <!-- remove later -->
+   <a routerLink="/admin">.</a>
   

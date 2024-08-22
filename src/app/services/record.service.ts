@@ -38,7 +38,7 @@ export class RecordsService {
     }
   }
 
-  addRecords(collectionName: string, records: any[]): Promise<void> {
+  async addRecords(collectionName: string, records: any[]): Promise<void> {
     return Promise.all(records.map((record) => this.addRecord(collectionName, record)))
       .then(() => {
         console.log('All records added successfully');

@@ -1,6 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { RouterModule } from '@angular/router';
 import { RecordsService } from '../../services/record.service';
+import { RecordsStateService } from '../../services/records-state.service';
 import { LoaderComponent } from '../../components/loader/loader.component';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { faWarning } from '@fortawesome/free-solid-svg-icons';
@@ -11,7 +13,8 @@ import { faWarning } from '@fortawesome/free-solid-svg-icons';
   imports: [
     CommonModule,
     LoaderComponent,
-    FontAwesomeModule
+    FontAwesomeModule,
+    RouterModule
   ],
   templateUrl: './home.component.html',
   styleUrls: ['./home.component.scss']
@@ -28,29 +31,27 @@ export class HomeComponent implements OnInit {
 
    Bad = faWarning;
   
-  constructor(private recordsService: RecordsService) { 
+  constructor(
+    private recordsService: RecordsService,
+    private recordsStateService: RecordsStateService
+  ) { 
     this.collectionNames.forEach((collectionName) => {
       this.showRecordsTracker[collectionName] = false;
     });
   }
   
   ngOnInit(): void {
-    const fetchPromises = this.collectionNames.map((collectionName) => this.fetchRecords(collectionName));
-      Promise.all(fetchPromises).then(() => {
-        this.loadingRecords = false;
-      }).catch((error) => {
-        console.error('Error fetching records:', error);
-        this.errorLoading = true;
-        this.errorMessage = 'Error fetching records. Please try again later.';
-        this.loadingRecords = false; // Optionally set loading to false even if there is an error
-      });
-  }
-  
-  async fetchRecords(collectionName: string): Promise<void> {
-    return this.recordsService.getRecords(collectionName).then((data) => {
-      this.records[collectionName] = data || [];
-    }).catch((error) => {
-      console.error('Error fetching records:', error);
+    this.recordsStateService.records$.subscribe((records) => {
+      this.records = records;
+    });
+
+    this.recordsStateService.loading$.subscribe((loading) => {
+      this.loadingRecords = loading;
+    });
+
+    this.recordsStateService.errorLoading$.subscribe((errorLoading) => {
+      this.errorLoading = errorLoading;
+      this.errorMessage = 'Failed to load records. Please try again later.';
     });
   }
 
