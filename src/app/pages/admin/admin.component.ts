@@ -54,7 +54,7 @@ export class AdminComponent implements OnInit, OnDestroy {
   Good = faCheckSquare;
   Bad = faFaceSadCry;
   Warning = faWarning;
-  Bin = faRecycle;
+  Bin = faRecycle; 
   icon: any = null;
 
 
@@ -112,29 +112,7 @@ export class AdminComponent implements OnInit, OnDestroy {
       this.icon = this.Bad;
     }
   }
-
-  addNewRecord(): void {
-    const newRecordForm = this.fb.group({
-      title: ['', Validators.required],
-      description: ['', Validators.required],
-      image: ['', Validators.required],
-      heldBy: this.fb.group({
-        team: ['', Validators.required],
-        person: ['', Validators.required],
-        nation: ['', Validators.required]
-      }),
-      dateRecorded: ['', Validators.required],
-      sources: ['', Validators.required],
-      relatedLinks: ['', Validators.required]
-    });
-
-    this.newRecords.push(newRecordForm);
-  }
-
-  removeRecord(index: number): void {
-    this.newRecords.splice(index, 1);
-  }
-
+  
   addRecords(): void {
     // first check if all forms are valid
     if (this.newRecords.some(recordForm => recordForm.invalid)) {
@@ -170,6 +148,29 @@ export class AdminComponent implements OnInit, OnDestroy {
       });
     }
   }
+
+  addNewRecord(): void {
+    const newRecordForm = this.fb.group({
+      title: ['', Validators.required],
+      description: ['', Validators.required],
+      image: ['', Validators.required],
+      heldBy: this.fb.group({
+        team: ['', Validators.required],
+        person: ['', Validators.required],
+        nation: ['', Validators.required]
+      }),
+      dateRecorded: ['', Validators.required],
+      sources: ['', Validators.required],
+      relatedLinks: ['', Validators.required]
+    });
+
+    this.newRecords.push(newRecordForm);
+  }
+
+  removeRecord(index: number): void {
+    this.newRecords.splice(index, 1);
+  }
+
 
   // Modify the editRecord method to handle multiple records
   editRecord(record: any): void {
